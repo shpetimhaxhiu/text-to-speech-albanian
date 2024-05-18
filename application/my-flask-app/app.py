@@ -20,52 +20,50 @@ def index():
     return render_template("index.html")
 
 
+async def run_edge_tts(text, voice, output_file):
+    process = await asyncio.create_subprocess_exec(
+        "edge-tts",
+        "--text",
+        text,
+        "-v",
+        voice,
+        "--write-media",
+        output_file,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    return process.returncode, stdout, stderr
+
+
 @app.route("/say", methods=["POST"])
 async def say():
+    data = request.get_json()
 
-    # Get JSON data from request
-    data = request.get_json(force=True)
-
-    # Validate request data
     if not data or not all(key in data for key in ("text", "voice")):
         return jsonify({"error": "Both 'text' and 'voice' parameters are required"}), 400
 
-    # Create a temporary file for the audio
     rand_audio_file = NamedTemporaryFile(delete=False, suffix=".mp3")
-
-    # Run the edge-tts command asynchronously
     try:
-        process = await asyncio.create_subprocess_exec(
-            "edge-tts",
-            "--text",
-            data["text"],
-            "-v",
-            data["voice"],
-            "--write-media",
-            rand_audio_file.name,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
+        returncode, stdout, stderr = await run_edge_tts(data["text"], data["voice"], rand_audio_file.name)
 
-        # Wait for the command to finish
-        stdout, stderr = await process.communicate()
-
-        # Check the command's exit status
-        if process.returncode != 0:
+        if returncode != 0:
             return (
                 jsonify(
                     {
-                        "error": f"Command 'edge-tts' returned non-zero exit status {process.returncode}. Command output: {stderr.decode()}"
+                        "error": f"Command 'edge-tts' returned non-zero exit status {returncode}. Command output: {stderr.decode()}"
                     }
                 ),
                 500,
             )
 
+        response = jsonify({"audio": rand_audio_file.name})
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    finally:
+        rand_audio_file.close()
 
-    # Return the name of the audio file
-    return jsonify({"audio": rand_audio_file.name}), 200
+    return response, 200
 
 
 if __name__ == "__main__":
