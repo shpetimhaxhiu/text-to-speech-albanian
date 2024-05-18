@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from tempfile import NamedTemporaryFile
 from pydantic import BaseModel
 import asyncio
-import subprocess
+import subprocess, os
 
 app = Flask(__name__)
 
@@ -57,13 +57,15 @@ async def say():
                 500,
             )
 
-        return send_file(rand_audio_file.name, mimetype="audio/mpeg", as_attachment=False, download_name="output.mp3")
+        response = send_file(
+            rand_audio_file.name, mimetype="audio/mpeg", as_attachment=False, download_name="output.mp3"
+        )
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        response = jsonify({"error": f"An error occurred: {str(e)}"}), 500
     finally:
-        rand_audio_file.close()
+        os.remove(rand_audio_file.name)
 
-    return response, 200
+    return response
 
 
 if __name__ == "__main__":

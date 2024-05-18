@@ -66,16 +66,18 @@
           body: JSON.stringify({ text, voice }),
         });
 
-        const data = await response.json();
-
         if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+
           player.innerHTML = `
             <audio controls class="mt-6 w-full">
-              <source src="${data.audio}" type="audio/mpeg">
+              <source src="${url}" type="audio/mpeg">
               Your browser does not support the audio element.
             </audio>
           `;
         } else {
+          const data = await response.json();
           player.innerHTML = `
             <p class="mt-6 text-red-500">Error: ${data.error}</p>
           `;
@@ -84,6 +86,7 @@
         document.querySelector('#loading').classList.add('hidden');
       });
     </script>
+
 
   </body>
 
