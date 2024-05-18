@@ -39,12 +39,12 @@
           </div>
         </div>
 
-        <div>
+        <!-- <div>
           <label for="lang" class="block text-lg font-medium text-gray-700 mb-2">Language</label>
           <select id="lang" name="lang" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500" required>
             <option value="sq-AL">Albanian</option>
           </select>
-        </div>
+        </div> -->
 
         <button type="submit" class="bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold py-3 rounded-lg shadow-lg hover:from-green-500 hover:to-blue-600 transition-colors duration-300">
           Speak
@@ -81,7 +81,7 @@
       function createAudioPlayer(blobUrl) {
 
         return `
-          <audio controls class="mt-6 w-full">
+          <audio controls class="mt-6 w-full" autoplay>
             <source src="${blobUrl}" type="audio/mpeg">
             Your browser does not support the audio element.
           </audio>
@@ -89,8 +89,10 @@
 
         `;
 
-        // Play right away
-         
+        // Play the audio
+        // const audio = new Audio(blobUrl);
+        // audio.play();
+        
       }
 
       function displayErrorMessage(message) {
@@ -128,6 +130,10 @@
           document.querySelector('#loading').classList.add('hidden');
         }
       });
+    
+      // On page load, select the first voice
+      document.onload = toggleVoice('male')
+    
     </script>
 
 
