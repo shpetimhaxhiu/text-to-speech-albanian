@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
 from tempfile import NamedTemporaryFile
 from pydantic import BaseModel
@@ -57,7 +57,7 @@ async def say():
                 500,
             )
 
-        response = jsonify({"audio": rand_audio_file.name})
+        return send_file(rand_audio_file.name, mimetype="audio/mpeg", as_attachment=False, download_name="output.mp3")
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     finally:

@@ -28,16 +28,8 @@
         <div>
           <label for="lang" class="block text-lg font-medium text-gray-700 mb-2">Language</label>
           <select id="lang" name="lang" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="it">Italian</option>
-            <option value="ja">Japanese</option>
-            <option value="ko">Korean</option>
-            <option value="pt">Portuguese</option>
-            <option value="ru">Russian</option>
-            <option value="zh">Chinese</option>
+            <option value="sq-AL">Albanian</option>
+            <option value="en-US">English</option>
           </select>
         </div>
 
@@ -49,39 +41,14 @@
       <div id="loading" class="hidden mt-6 text-center">
         <p class="text-lg font-semibold text-blue-500">Loading...</p>
       </div>
+      <div id="player">
+        <audio controls class="mt-6 w-full"></audio>
+      </div>
     </div>
 
     <script>
-      /*
-        POST /say
-        This endpoint generates an audio file from the provided text and voice.
-        ---
-        parameters:
-          - name: text
-          in: body
-          type: string
-          required: true
-          description: The text to convert to speech.
-          - name: voice
-          in: body
-          type: string
-          required: true
-          description: The voice to use for the speech.
-        responses:
-          200:
-          description: The audio file was successfully generated.
-          schema:
-            type: object
-            properties:
-            audio:
-              type: string
-              description: The name of the audio file.
-          400:
-          description: The request data was invalid.
-          500:
-          description: An error occurred while generating the audio file.
-      */
       const form = document.querySelector('#speechForm');
+      const player = document.querySelector('#player');
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -89,7 +56,6 @@
 
         const formData = new FormData(form);
         const text = formData.get('text');
-        const lang = formData.get('lang');
         const voice = formData.get('voice');
 
         const response = await fetch('/say', {
@@ -97,21 +63,28 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text, lang, voice }),
+          body: JSON.stringify({ text, voice }),
         });
 
         const data = await response.json();
 
-        if (data.cmd) {
-          const audio = new Audio(`https://example.com/playback?cmd=${encodeURIComponent(data.cmd)}`);
-          audio.play();
+        if (response.ok) {
+          player.innerHTML = `
+            <audio controls class="mt-6 w-full">
+              <source src="${data.audio}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          `;
         } else {
-          console.error('No command found in the response');
+          player.innerHTML = `
+            <p class="mt-6 text-red-500">Error: ${data.error}</p>
+          `;
         }
 
         document.querySelector('#loading').classList.add('hidden');
       });
     </script>
+
   </body>
 
 </html>
