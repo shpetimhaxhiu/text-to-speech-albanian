@@ -22,35 +22,7 @@ def index():
 
 @app.route("/say", methods=["POST"])
 async def say():
-    """
-    POST /say
-    This endpoint generates an audio file from the provided text and voice.
-    ---
-    parameters:
-      - name: text
-      in: body
-      type: string
-      required: true
-      description: The text to convert to speech.
-      - name: voice
-      in: body
-      type: string
-      required: true
-      description: The voice to use for the speech.
-    responses:
-      200:
-      description: The audio file was successfully generated.
-      schema:
-        type: object
-        properties:
-        audio:
-          type: string
-          description: The name of the audio file.
-      400:
-      description: The request data was invalid.
-      500:
-      description: An error occurred while generating the audio file.
-    """
+
     # Get JSON data from request
     data = request.get_json(force=True)
 
