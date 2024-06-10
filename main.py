@@ -64,7 +64,12 @@ def merge_audio_clips(audio_clips, output_file):
         file.write("\n".join(input_files))
 
     merge_command = ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", input_list_path, "-c", "copy", output_file]
-    subprocess.run(merge_command, check=True)
+    process = subprocess.run(merge_command, capture_output=True)
+    print("FFmpeg stdout:", process.stdout.decode())
+    print("FFmpeg stderr:", process.stderr.decode())
+
+    if process.returncode != 0:
+        raise Exception(f"Error merging audio clips: {process.stderr.decode()}")
 
     os.remove(input_list_path)  # Clean up the input list file
 
@@ -133,4 +138,4 @@ async def say(tts_data: TTSSchema):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=7891, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
