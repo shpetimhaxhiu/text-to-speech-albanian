@@ -1,0 +1,27 @@
+1
+00:00:00,050 --> 00:00:04,320
+Ne kemi vendosur atë model të veçantë në një dosje të quajtur models.
+
+2
+00:00:04,340 --> 00:00:05,900
+Mund t'i jepni çfarëdo emri.
+
+3
+00:00:06,380 --> 00:00:07,760
+Mund ta konfirmoni vetëm.
+
+4
+00:00:07,790 --> 00:00:10,190
+E kemi modelin në direktorinë tonë të punës.
+
+5
+00:00:10,550 --> 00:00:12,380
+Duhet të reflektojë këtu.
+
+6
+00:00:12,680 --> 00:00:19,520
+Pasi ta kemi këtë, ne do të vazhdojmë duke përdorur këtë bibliotekë që kemi, duke e kaluar rrugën e modeleve,
+
+7
+00:00:19,520 --> 00:00:21,680
+e cila është models.

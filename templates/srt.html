@@ -12,12 +12,10 @@
       href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"
       rel="stylesheet"
     />
-
     <title>Text to Speech - Albanian</title>
   </head>
-
   <body
-    class="bg-gradient-to-r flex flex-col from-slate-900 items-center justify-center min-h-screen space-y-6 to-slate-700"
+    class="bg-gradient-to-r from-slate-900 to-slate-700 min-h-screen flex items-center justify-center"
   >
     {% include 'navbar.html' %}
     <div
@@ -26,28 +24,25 @@
       <h1 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">
         Konverto Tekstin në Zë
       </h1>
-
       <form
         id="speechForm"
         class="flex flex-col space-y-6"
       >
         <div>
           <label
-            for="text"
+            for="srtFile"
             class="block text-lg font-medium text-gray-700 mb-2"
-            >Teksti</label
+            >Ngarko skedarin SRT</label
           >
-          <textarea
-            id="text"
-            name="text"
+          <input
+            type="file"
+            id="srtFile"
+            name="file"
+            accept=".srt"
             class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-            rows="4"
             required
-          >
-Ky është një shembull i një teksti që mund të përdorni për të dëgjuar si zë.</textarea
-          >
+          />
         </div>
-
         <div>
           <label class="block text-lg font-medium text-gray-700 mb-2"
             >Zëri</label
@@ -99,7 +94,6 @@ Ky është një shembull i një teksti që mund të përdorni për të dëgjuar 
           Speak
         </button>
       </form>
-
       <div
         id="loading"
         class="mt-6 text-center fade hidden transition-all duration-200"
@@ -131,11 +125,10 @@ Ky është një shembull i një teksti që mund të përdorni për të dëgjuar 
           .classList.toggle("bg-pink-300", selectedVoice === "female");
       }
 
-      async function sendPostRequest(url, headers, body) {
+      async function sendPostRequest(url, formData) {
         const response = await fetch(url, {
           method: "POST",
-          headers,
-          body: JSON.stringify(body),
+          body: formData,
         });
         return response;
       }
@@ -147,7 +140,6 @@ Ky është një shembull i një teksti që mund të përdorni për të dëgjuar 
             Your browser does not support the audio element.
           </audio>
           <a href="${blobUrl}" download class="block text-center text-blue-500 mt-2">Download</a>
-
         `;
       }
 
@@ -164,15 +156,8 @@ Ky është një shembull i një teksti që mund të përdorni për të dëgjuar 
         document.querySelector("#loading").classList.remove("hidden");
 
         const formData = new FormData(form);
-        const text = formData.get("text");
-        const voice = formData.get("voice");
-
         try {
-          const response = await sendPostRequest(
-            "/say",
-            { "Content-Type": "application/json" },
-            { text, voice }
-          );
+          const response = await sendPostRequest("/srt", formData);
 
           if (response.ok) {
             const blob = await response.blob();

@@ -1,0 +1,313 @@
+1
+00:00:00,050 --> 00:00:04,320
+Ne kemi vendosur atë model të veçantë në një dosje të quajtur models.
+
+2
+00:00:04,340 --> 00:00:05,900
+Mund t'i jepni çfarëdo emri.
+
+3
+00:00:06,380 --> 00:00:07,760
+Mund ta konfirmoni vetëm.
+
+4
+00:00:07,790 --> 00:00:10,190
+E kemi modelin në direktorinë tonë të punës.
+
+5
+00:00:10,550 --> 00:00:12,380
+Duhet të reflektojë këtu.
+
+6
+00:00:12,680 --> 00:00:19,520
+Pasi ta kemi këtë, ne do të vazhdojmë duke përdorur këtë bibliotekë që kemi, duke e kaluar rrugën e modeleve,
+
+7
+00:00:19,520 --> 00:00:21,680
+e cila është models.
+
+8
+00:00:21,680 --> 00:00:27,650
+Dhe brenda saj ky skedar i veçantë i shkarkuar nga ky URL pasi të keni marrë
+
+9
+00:00:27,650 --> 00:00:29,810
+qasje nga Lambda2 prej këtu.
+
+10
+00:00:32,770 --> 00:00:39,070
+Pasi të bëhet kjo, ne përcaktojmë llojin e modelit si lambda sepse kjo është një version i lambda dhe
+
+11
+00:00:39,070 --> 00:00:42,400
+pastaj mund të vendosim parametra të ndryshëm konfigurimi.
+
+12
+00:00:42,430 --> 00:00:47,470
+Unë po vendos vetëm max new tokens këtu dhe temperaturën për të vendosur kreativitetin.
+
+13
+00:00:47,500 --> 00:00:52,390
+Gjithashtu mund të jepni vlerat max top K dhe të gjitha këto, pasi të bëhet kjo.
+
+14
+00:00:52,420 --> 00:00:59,170
+Ne po krijojmë një shabllon që mund të përdoret më vonë si një prompt për LM-në tonë, siç kemi bërë me këtë,
+
+15
+00:00:59,170 --> 00:01:03,100
+që na jep inteligjencën, që është pjesa LM e saj.
+
+16
+00:01:03,190 --> 00:01:05,410
+Ne po krijojmë shabllonin këtu.
+
+17
+00:01:05,410 --> 00:01:10,190
+Siç mund ta shihni, shablloni është diçka e tillë si shkruaj një email me stil.
+
+18
+00:01:10,210 --> 00:01:13,480
+Kjo vlerë stili do të vijë nga aplikacioni që kemi.
+
+19
+00:01:13,510 --> 00:01:14,050
+Ky këtu.
+
+20
+00:01:14,050 --> 00:01:14,860
+Pikërisht ky.
+
+21
+00:01:17,780 --> 00:01:23,150
+Dhe përfshin temën, çfarëdo teme që kemi dhënë në aplikacion.
+
+22
+00:01:23,240 --> 00:01:24,710
+Pastaj vjen dërguesi.
+
+23
+00:01:24,740 --> 00:01:26,480
+Pastaj vjen marrësi.
+
+24
+00:01:26,900 --> 00:01:29,960
+Dhe ne po i themi Ju lutem filloni tekstin e emailit.
+
+25
+00:01:30,630 --> 00:01:37,320
+Pasi të kemi krijuar shabllonin, ne po krijojmë prompt-in final duke kaluar variablat e inputit
+
+26
+00:01:37,320 --> 00:01:40,710
+që do të kalojmë këtu dhe vetë shabllonin.
+
+27
+00:01:40,740 --> 00:01:43,260
+Kjo formon prompt-in final për ne.
+
+28
+00:01:44,280 --> 00:01:52,530
+Dhe siç e dini, ne mund të marrim formatin e saktë duke përdorur një funksion format mbi këtë prompt që
+
+29
+00:01:52,530 --> 00:01:54,270
+sapo kemi krijuar.
+
+30
+00:01:54,420 --> 00:02:01,950
+Ju lutem referohuni projekteve të vjetra dhe koncepteve të Lang Chain për të kuptuar më mirë
+
+31
+00:02:01,950 --> 00:02:04,920
+prompt-in dhe shabllonin e prompt-it.
+
+32
+00:02:05,550 --> 00:02:12,650
+Pasi të kemi këtë, ne po kalojmë të gjitha vlerat që janë të nevojshme për këtë shabllon të veçantë prompt-i,
+
+33
+00:02:12,660 --> 00:02:21,030
+e para është tema e emailit, e cila vjen nga aplikacioni, dërguesi, marrësi dhe stili i tij.
+
+34
+00:02:21,030 --> 00:02:21,570
+Të gjitha këto vlera
+
+35
+00:02:21,600 --> 00:02:29,400
+marrin këtë tekst të veçantë dhe pastaj do t'i zëvendësojnë ato këtu në këto variabla që mund t'i shohim.
+
+36
+00:02:31,380 --> 00:02:37,230
+Pasi të bëhet kjo, e gjithë gjëja i kalon LM-së që sapo kemi krijuar.
+
+37
+00:02:38,120 --> 00:02:41,060
+E cila vepron si një inteligjencë për aplikacionin tonë.
+
+38
+00:02:41,060 --> 00:02:45,160
+Pastaj ajo jep një përgjigje që ne saktësisht kemi nevojë.
+
+39
+00:02:45,170 --> 00:02:48,740
+Ne po e kthejmë atë prapa atje ku po thirret kjo funksion.
+
+40
+00:02:48,740 --> 00:02:52,850
+Le të kopjojmë këtë në mënyrë që ta përdorim kudo që të na nevojitet.
+
+41
+00:02:53,390 --> 00:02:59,000
+Le ta kopjojmë këtë dhe të kthehemi këtu dhe ta zëvendësojmë këtë me atë funksion.
+
+42
+00:03:00,830 --> 00:03:02,430
+Po pret inputin e formës.
+
+43
+00:03:02,440 --> 00:03:08,290
+Kjo po vjen këtu dhe pastaj po pret dërguesin e emailit, që po vjen këtu.
+
+44
+00:03:08,290 --> 00:03:10,330
+Marrësi dhe stili i emailit.
+
+45
+00:03:10,540 --> 00:03:11,470
+Jemi bërë.
+
+46
+00:03:11,470 --> 00:03:13,060
+Më lejoni ta ruaj këtë.
+
+47
+00:03:14,540 --> 00:03:16,310
+Do të bëj një përmbledhje të kësaj.
+
+48
+00:03:16,340 --> 00:03:20,600
+Ne kemi krijuar UI-në e tij dhe pastaj po krijojmë një funksion.
+
+49
+00:03:21,470 --> 00:03:23,670
+Që do të inicializojë të gjitha këto gjëra.
+
+50
+00:03:23,690 --> 00:03:29,180
+Gjëja e parë, ne do të përpiqemi të përdorim modelin lokal që kemi dhe ta krijojmë dhe ta ruajmë në.
+
+51
+00:03:30,910 --> 00:03:37,150
+Pasi ta kemi këtë, ne po krijojmë një shabllon dhe pastaj zëvendësojmë të gjitha këto vlera në atë shabllon
+
+52
+00:03:37,150 --> 00:03:42,220
+duke pasur vlerën e prompt-it, duke përdorur metodën e shabllonit të prompt-it.
+
+53
+00:03:42,220 --> 00:03:48,760
+
+
+Pasi të bëhet kjo, ne po përpiqemi të thërrasim duke furnizuar të gjitha vlerat e nevojshme për këtë shabllon të veçantë
+
+54
+00:03:48,760 --> 00:03:51,760
+dhe ne më në fund marrim përgjigjen.
+
+55
+00:03:51,760 --> 00:03:57,610
+Dhe pastaj po përpiqemi të thërrasim atë funksion këtu dhe ta marrim përgjigjen mbrapa në UI të aplikacionit.
+
+56
+00:03:57,610 --> 00:03:59,890
+Më lejoni të kthehem në aplikacion një herë.
+
+57
+00:03:59,890 --> 00:04:00,910
+Ja ku jemi.
+
+58
+00:04:01,330 --> 00:04:04,570
+Më lejoni ta ripërsëris këtë sepse kemi bërë disa ndryshime.
+
+59
+00:04:07,170 --> 00:04:07,860
+Ja ku jemi.
+
+60
+00:04:07,890 --> 00:04:10,260
+Më lejoni të jap temën si.
+
+61
+00:04:12,830 --> 00:04:13,790
+Zhvillimi.
+
+62
+00:04:14,620 --> 00:04:16,390
+Probleme në.
+
+63
+00:04:19,000 --> 00:04:19,870
+Projekt.
+
+64
+00:04:21,290 --> 00:04:24,860
+Dhe emri do të jetë Sharath këtu.
+
+65
+00:04:25,700 --> 00:04:28,910
+Dhe emri i marrësit do të jetë Sumanth këtu.
+
+66
+00:04:29,420 --> 00:04:32,030
+Dhe le të jetë kjo.
+
+67
+00:04:32,780 --> 00:04:34,400
+Një ton jo i kënaqur.
+
+68
+00:04:34,970 --> 00:04:36,560
+Më lejoni të klikoj Gjenero.
+
+69
+00:04:37,290 --> 00:04:42,780
+Kjo mund të zgjasë një kohë sepse po përdorim burime të kufizuara, që është CPU këtu.
+
+70
+00:04:42,780 --> 00:04:47,280
+Mund të zgjasë disa kohë krahasuar me modelet e tjera që po përdornim më parë.
+
+71
+00:04:49,730 --> 00:04:53,360
+Emaili që po presim është gjeneruar.
+
+72
+00:04:53,360 --> 00:04:55,220
+Kjo është si do të duket.
+
+73
+00:04:55,310 --> 00:04:57,830
+I dashur Samantha, shpresoj që ky email t'ju gjejë mirë.
+
+74
+00:04:57,860 --> 00:05:03,650
+Po ju shkruaj për t'ju vënë në dijeni për disa probleme zhvillimi dhe të gjitha këto gjëra.
+
+75
+00:05:03,980 --> 00:05:08,750
+Kështu ishit në gjendje të ekzekutoni modelin Lambda2 në kompjuterin tuaj lokal.
+
+76
+00:05:08,780 --> 00:05:13,070
+Së shpejti do të zbatojë më shumë projekte duke përdorur Lambda2.
+
+77
+00:05:13,100 --> 00:05:13,970
+Qëndroni të lidhur.
+
+78
+00:05:14,000 --> 00:05:17,270
+Shpresoj që ta keni shijuar procesin e mësimit.
