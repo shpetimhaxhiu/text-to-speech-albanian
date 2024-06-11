@@ -3,12 +3,18 @@ from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, ValidationError
 from tempfile import NamedTemporaryFile
 import subprocess
+import requests
 import srt
 import os
 from fastapi.templating import Jinja2Templates
+from pathlib import Path
+import openai
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+# Initialize OpenAI client
+client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # Define a Pydantic model for the request body
@@ -52,6 +58,42 @@ def generate_audio_clips(subtitles, voice, output_dir):
         returncode, stdout, stderr = run_edge_tts(text, voice, output_file)
         if returncode != 0:
             raise Exception(f"Error generating audio clip: {stderr.decode()}")
+        audio_clips.append((output_file, subtitle.start.total_seconds()))
+    return audio_clips
+
+
+def generate_speech(script, voice: str = "onyx"):
+    response = requests.post(
+        "https://api.openai.com/v1/audio/speech",
+        headers={
+            "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
+        },
+        json={
+            "model": "tts-1-1106",
+            "input": script,
+            "voice": voice,
+        },
+    )
+
+    audio = b""
+    for chunk in response.iter_content(chunk_size=1024 * 1024):
+        audio += chunk
+
+    return audio
+
+
+# Function to generate individual audio clips using OpenAI
+async def generate_audio_clips_openai(subtitles, voice, output_dir):
+    audio_clips = []
+    for i, subtitle in enumerate(subtitles):
+        text = subtitle.content
+        output_file = os.path.join(output_dir, f"clip_{i}.mp3")
+
+        response = generate_speech(text, voice)
+
+        with open(output_file, "wb") as f:
+            f.write(response)
+
         audio_clips.append((output_file, subtitle.start.total_seconds()))
     return audio_clips
 
@@ -113,6 +155,44 @@ async def srt_form_post(request: Request, file: UploadFile = File(...), voice: s
                 os.remove(clip)
 
 
+@app.get("/openai-srt", response_class=HTMLResponse)
+async def srt_form_openai(request: Request):
+    return templates.TemplateResponse("srt-openai.html", {"request": request})
+
+@app.post("/openai-srt", response_class=HTMLResponse)
+async def srt_form_post_openai(request: Request, file: UploadFile = File(...), voice: str = Form(...)):
+    try:
+        filename = file.filename
+        temp_file = NamedTemporaryFile(delete=False, suffix=".srt")
+        with open(temp_file.name, "wb") as out_file:
+            out_file.write(await file.read())
+        temp_file.close()
+
+        # Validate request data with Pydantic
+        try:
+            tts_data = TTSSRTSchema(voice=voice)
+        except ValidationError as e:
+            return templates.TemplateResponse("srt.html", {"request": request, "error": e.errors()})
+
+        subtitles = parse_srt(temp_file.name)
+        output_dir = os.path.dirname(temp_file.name)
+        audio_clips = await generate_audio_clips_openai(subtitles, tts_data.voice, output_dir)
+
+        output_audio_file = os.path.join(output_dir, "final_output.mp3")
+        merge_audio_clips(audio_clips, output_audio_file)
+
+        return FileResponse(output_audio_file, media_type="audio/mpeg", filename="output.mp3")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+    finally:
+        if os.path.exists(temp_file.name):
+            os.remove(temp_file.name)
+        for clip, _ in audio_clips:
+            if os.path.exists(clip):
+                os.remove(clip)
+
+
 @app.post("/say")
 async def say(tts_data: TTSSchema):
     try:
@@ -125,6 +205,25 @@ async def say(tts_data: TTSSchema):
                     status_code=500,
                     detail=f"Command 'edge-tts' returned non-zero exit status {returncode}. Command output: {stderr.decode()}",
                 )
+
+            return FileResponse(rand_audio_file.name, media_type="audio/mpeg", filename="output.mp3")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        finally:
+            rand_audio_file.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+
+
+@app.post("/say_with_openai", response_class=FileResponse)
+async def say_with_openai(tts_data: TTSSchema):
+    try:
+        rand_audio_file = NamedTemporaryFile(delete=False, suffix=".mp3")
+        try:
+            response = generate_speech(tts_data.text, tts_data.voice)
+
+            with open(rand_audio_file.name, "wb") as f:
+                f.write(response)
 
             return FileResponse(rand_audio_file.name, media_type="audio/mpeg", filename="output.mp3")
         except Exception as e:
