@@ -1,5 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
+from starlette.routing import NoMatchFound, request_response
+
 from pydantic import BaseModel, ValidationError
 from tempfile import NamedTemporaryFile
 import subprocess
@@ -17,6 +19,13 @@ templates = Jinja2Templates(directory="templates")
 client = openai.Client(api_key=os.getenv("OPENAI_API_KEY"))
 
 
+def url_for(name: str):
+    try:
+        return app.router.url_path_for(name)
+    except NoMatchFound:
+        raise ValueError(f"Route with name {name} not found")
+
+
 # Define a Pydantic model for the request body
 class TTSSchema(BaseModel):
     text: str
@@ -28,7 +37,7 @@ class TTSSRTSchema(BaseModel):
     voice: str
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, name="index")
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
@@ -158,6 +167,7 @@ async def srt_form_post(request: Request, file: UploadFile = File(...), voice: s
 @app.get("/openai-srt", response_class=HTMLResponse)
 async def srt_form_openai(request: Request):
     return templates.TemplateResponse("srt-openai.html", {"request": request})
+
 
 @app.post("/openai-srt", response_class=HTMLResponse)
 async def srt_form_post_openai(request: Request, file: UploadFile = File(...), voice: str = Form(...)):
